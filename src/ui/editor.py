@@ -4,6 +4,11 @@ from st_pages import Page, show_pages, add_page_title
 
 from utils.chatbot import generate_response
 from utils.file import *
+from utils.text import generate_diff
+from judge0 import Judge0Client
+
+import time
+
 
 add_page_title()
 
@@ -76,3 +81,113 @@ if "problem_id" in st.session_state:
                 language="python",
                 line_numbers=True
             )
+            
+
+@st.cache_resource
+def new_judge_client():
+    return Judge0Client()
+
+
+judge_client = new_judge_client()
+
+languages_data = judge_client.get_languages()
+language_map = {language["name"]: language["id"] for language in languages_data}
+st.subheader("執行驗證測資程式")
+
+in_data, ans_data = "", ""
+sample_path = "data/sample"
+if folder_exists(sample_path):
+    files = list_folder(sample_path)
+    infile, ansfile = pair_files(files)[0]
+    in_data = open_file(sample_path, infile)
+    ans_data = open_file(sample_path, ansfile)
+
+
+language = st.selectbox(
+    "選擇程式語言",
+    options=list(sorted(language_map.keys(), reverse=True)),
+    index=8,
+)
+language_id = language_map[language]
+input_block, ans_block = st.columns(2)
+with input_block:
+    st.write("測試測資")
+    in_data = st_ace(in_data, height=200, auto_update=True, key="in_data_ace")
+
+with ans_block:
+    st.write("測資答案")
+    ans_data = st_ace(ans_data, height=200, auto_update=True, key="ans_data_ace")
+
+if st.button("執行"):
+    with st.spinner("執行中..."):
+        submission = judge_client.create_submission(
+            source_code,
+            language_id,
+            stdin=in_data,
+            expected_output=ans_data,
+        )
+        submission_id = submission["token"]
+        submission = judge_client.get_submission(submission_id)
+        while submission["status"]["id"] <= 2:
+            submission = judge_client.get_submission(submission_id)
+            st.toast(submission["status"]["description"])
+            time.sleep(1)
+        # st.write(submission)
+        stdout = submission["stdout"]
+        exec_time = submission["time"]
+        exec_memory = submission["memory"]
+        stderr = submission["stderr"]
+        compile_output = submission["compile_output"]
+        st.divider()
+        if submission["status"]["id"] == 3:
+            exec_time_block, exec_memory_block = st.columns(2)
+            exec_time_block.metric(label="程式執行時間", value=f"{exec_time} 秒")
+            if exec_memory > 1024:
+                exec_memory = exec_memory / 1024
+                exec_memory_block.metric(label="記憶體使用量", value=f"{exec_memory:.2f} MB")
+            else:
+                exec_memory_block.metric(label="記憶體使用量", value=f"{exec_memory} KB")
+            st.divider()
+        
+        if submission["status"]["id"] == 3:
+            st.success(submission["status"]["description"])
+        else:
+            st.error(submission["status"]["description"])
+            st.json(submission)
+        st.divider()
+
+        if stderr:
+            st.error(stderr)
+            st.divider()
+
+        if compile_output:
+            st.error(compile_output)
+            st.divider()
+
+        if stdout:
+            diff_left, diff_right = generate_diff(stdout, ans_data)
+            st.subheader("程式輸出與測資答案差異")
+            left_block, right_block = st.columns(2)
+            with left_block:
+                st.write("程式輸出:")
+                st.caption("- 表示程式輸出錯誤")
+                st_ace(
+                    diff_left,
+                    language="diff",
+                    auto_update=True,
+                    readonly=True,
+                    theme=theme,  # type: ignore
+                    key="left_block_ace",
+                )
+
+            with right_block:
+                st.write("測資答案:")
+                st.caption("+ 表示測資正確答案")
+                st_ace(
+                    diff_right,
+                    language="diff",
+                    auto_update=True,
+                    readonly=True,
+                    theme=theme,  # type: ignore
+                    key="right_block_ace",
+                )
