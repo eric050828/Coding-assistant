@@ -7,19 +7,20 @@ from utils.file import *
 show_pages(
     [
         Page("src/ui/home.py", "首頁", "👋"),
-        Section("競賽"), 
+        Section("競賽"),
         Page("src/ui/select_problem.py", "選擇題目", in_section=True),
         Page("src/ui/problem_preview.py", "題目預覽", in_section=True),
-        
+
         Section("資料庫"),
         Page("src/ui/code_list.py", "檢視程式碼", in_section=True),
         Page("src/ui/add_codes.py", "新增程式碼", in_section=True),
         Page("src/ui/delete_codes.py", "刪除程式碼", in_section=True),
         # Page("src/ui/search_codes.py", "尋找程式碼", in_section=True),
-        
+
         Section("程式助手"),
         Page("src/ui/editor.py", "編輯器", in_section=True),
-        
+        Page("src/ui/edit_testcase.py", "編輯測資", in_section=True),
+        Page("src/ui/verify_testcase.py", "驗證測資", in_section=True),
     ]
 )
 
@@ -40,8 +41,8 @@ st.dataframe(
     {
         "題目代號": exist_problems,
         "程式碼數量": problem_codes_count,
-    }, 
-    hide_index=True, 
+    },
+    hide_index=True,
     use_container_width=True
 )
 st.bar_chart(

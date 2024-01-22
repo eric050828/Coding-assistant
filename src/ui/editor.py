@@ -95,7 +95,7 @@ language_map = {language["name"]: language["id"] for language in languages_data}
 st.subheader("執行驗證測資程式")
 
 in_data, ans_data = "", ""
-sample_path = "data/sample"
+sample_path = "dom/data/sample"
 if folder_exists(sample_path):
     files = list_folder(sample_path)
     infile, ansfile = pair_files(files)[0]

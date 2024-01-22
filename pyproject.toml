@@ -6,7 +6,7 @@ authors = ["jasonxie <x5758x@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 pydantic = "^2.5.3"
 requests = "^2.31.0"
 
@@ -97,6 +97,6 @@ ban-relative-imports = "all"
 convention = "google"
 
 [tool.pyright]
-pythonVersion = "3.12"
+pythonVersion = "3.11"
 typeCheckingMode = "basic"
 reportUnnecessaryTypeIgnoreComment = true

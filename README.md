@@ -20,6 +20,8 @@ $ cat /proc/cmdline
 1. Create `.env`
     ```
     JUDGE0_URL=http://server:2358
+    OPENAI_API_KEY = "your-api-key-here"
+    VECTORSTORE_DIRECTORY = "vectordb"
     ```
 2. `docker compose build`
 3. `docker compose up -d`

@@ -3,6 +3,8 @@ import time
 import streamlit as st
 
 from streamlit_ace import st_ace
+from st_pages import add_page_title
+
 from judge0 import Judge0Client
 from utils.file import (
     list_folder,
@@ -13,13 +15,13 @@ from utils.file import (
 from utils.text import generate_diff
 
 
-st.set_page_config(page_title="驗證測資", page_icon="▶️")
-st.title("驗證測資")
+add_page_title()
 
 st.sidebar.header("驗證測資程式")
 source_code_path = st.sidebar.selectbox(
     "選擇驗證測資程式",
-    list_files("code"),
+    ["main.py"],
+    # list_files("code"),
 )
 source_code = open_file("code", source_code_path) if source_code_path else ""
 
@@ -48,7 +50,7 @@ show_path, show_count, exec_bt, batch_bt = st.columns(4)
 files = []
 data_folder = None  
 if folder_option is not None:
-    data_folder = os.path.join("data", folder_option)
+    data_folder = os.path.join("dom/data", folder_option)
     show_path.write(data_folder)
     files = list_folder(data_folder)
     case_count = int(len(files) // 2)
