@@ -9,10 +9,6 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 3. Create .env
-```shell
-mkdir config
-cd config
-```
 ```
 OPENAI_API_KEY = "your-openai-api-key"
 VECTORSTORE_DIRECTORY = "vectordb"

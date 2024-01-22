@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import os
 
 
-load_dotenv("config/.env")
+load_dotenv()
 VECTORSTORE_DIRECTORY = os.getenv("VECTORSTORE_DIRECTORY")
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
