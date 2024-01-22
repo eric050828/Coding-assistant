@@ -38,7 +38,7 @@ judge_client = new_judge_client()
 languages_data = judge_client.get_languages()
 language_map = {language["name"]: language["id"] for language in languages_data}
 
-folder_option = st.selectbox("選擇測資類型", list_folder("data"))
+folder_option = st.selectbox("選擇測資類型", ["sample", "secret"])
 language = st.selectbox(
     "選擇程式語言",
     options=list(sorted(language_map.keys(), reverse=True)),
